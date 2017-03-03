@@ -17,10 +17,13 @@ def alb_handler(url):
 	soup = BeautifulSoup(page, "html.parser")
 	all_img1 = soup.find_all("div", { "class" : "post-image"})
 
+count = 0
+
 while True:
 	for sub in subreddits:
 		for submission in reddit.subreddit(sub).hot(limit=10):
-			# print(submission.title + " " + submission.url)
+			count += 1
+			print(submission.title + " " + submission.url)
 
 			temp_path = os.path.join(config.path, slugify(submission.title))
 			url = submission.url
@@ -28,20 +31,26 @@ while True:
 			if 'reddit.com/r/' in url:
 				continue
 
-			if 'imgur.com/a/' in url:
-				alb_handler(url)
+			if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
+				url += ".jpg"
+
+			# if 'imgur.com/a/' in url:
+			# 	alb_handler(url)
 
 			if 'imgur' in url and '.jpg' not in url:
 				url += ".jpg"
 
 			if '.jpg' in url:
 				temp_path += '.jpg'
+			elif '.png' in url:
+				temp_path += '.png'
+
 			try:
 				urllib.request.urlretrieve(url, temp_path)
 			except Exception as e:
 				print("Request failed: " + str(e))
 				pass
 		time.sleep(1)
-
+	print(count)
 	time.sleep(60)
 
