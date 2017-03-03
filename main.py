@@ -37,7 +37,7 @@ while True:
 			# if 'imgur.com/a/' in url:
 			# 	alb_handler(url)
 
-			if 'imgur' in url and '.jpg' not in url:
+			if 'imgur' in url and '.jpg' not in url and '.png' not in url:
 				url += ".jpg"
 
 			if '.jpg' in url:
