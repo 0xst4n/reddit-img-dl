@@ -10,16 +10,23 @@ from imgurpython import ImgurClient
 reddit = praw.Reddit(client_id=config.client_id, client_secret=config.client_secret, user_agent=config.user_agent)
 reddit.read_only = True # might not be needed at all.
 
-client = ImgurClient(config.imgur_client_id)
+client = ImgurClient(config.imgur_client_id, "")
 
 subreddits = config.subreddits
 
 # was working on this. might just wanna use some module.
 def alb_handler(url):
-	alb_id = url.split("/")[2]
-	print(alb_id)
-	imgs = get_album_images(alb_id)
-	print(imgs)
+	alb_id = url.split("/")[4]
+	imgs = client.get_album_images(alb_id)
+	for x in imgs:
+		temp_path = os.path.join(config.path, slugify(str(x.datetime)) + '.jpg')
+		print(x.link)
+		try:
+			urllib.request.urlretrieve(x.link, temp_path)
+		except Exception as e:
+			print("Request failed: " + str(e))
+			pass
+
 
 count = 0
 
@@ -40,6 +47,7 @@ while True:
 
 			if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
 				alb_handler(url)
+				continue
 
 			if 'imgur' in url and '.jpg' not in url and '.png' not in url:
 				url += ".jpg"
