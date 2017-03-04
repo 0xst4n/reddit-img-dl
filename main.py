@@ -5,17 +5,21 @@ import urllib.request
 import os
 from bs4 import BeautifulSoup
 from slugify import slugify
+from imgurpython import ImgurClient
 
 reddit = praw.Reddit(client_id=config.client_id, client_secret=config.client_secret, user_agent=config.user_agent)
 reddit.read_only = True # might not be needed at all.
+
+client = ImgurClient(config.imgur_client_id)
 
 subreddits = config.subreddits
 
 # was working on this. might just wanna use some module.
 def alb_handler(url):
-	page = urllib.request.urlopen(url)
-	soup = BeautifulSoup(page, "html.parser")
-	all_img1 = soup.find_all("div", { "class" : "post-image"})
+	alb_id = url.split("/")[2]
+	print(alb_id)
+	imgs = get_album_images(alb_id)
+	print(imgs)
 
 count = 0
 
@@ -34,8 +38,8 @@ while True:
 			if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
 				url += ".jpg"
 
-			# if 'imgur.com/a/' in url:
-			# 	alb_handler(url)
+			if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
+				alb_handler(url)
 
 			if 'imgur' in url and '.jpg' not in url and '.png' not in url:
 				url += ".jpg"
