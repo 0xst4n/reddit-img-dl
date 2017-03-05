@@ -14,29 +14,35 @@ client = ImgurClient(config.imgur_client_id, "")
 
 subreddits = config.subreddits
 
+count = 0
+
+def save_img(link, name):
+	global count
+	# new syntax
+	ext = '.jpg' if '.jpg' in link else '.png'
+	temp_path = os.path.join(config.path, slugify(name) + ext)
+
+	try:
+		urllib.request.urlretrieve(link, temp_path)
+	except Exception as e:
+		print("Request:" + link + ": failed: " + str(e))
+		pass
+	
+	print(name + ' ' + link)
+	count +=1
+
 # was working on this. might just wanna use some module.
 def alb_handler(url):
 	alb_id = url.split("/")[4]
 	imgs = client.get_album_images(alb_id)
 	for x in imgs:
-		temp_path = os.path.join(config.path, slugify(str(x.datetime)) + '.jpg')
-		print(x.link)
-		try:
-			urllib.request.urlretrieve(x.link, temp_path)
-		except Exception as e:
-			print("Request failed: " + str(e))
-			pass
+		save_img(x.link, str(x.datetime))
 
-
-count = 0
 
 while True:
 	for sub in subreddits:
 		for submission in reddit.subreddit(sub).hot(limit=10):
-			count += 1
-			print(submission.title + " " + submission.url)
 
-			temp_path = os.path.join(config.path, slugify(submission.title))
 			url = submission.url
 
 			if 'reddit.com/r/' in url:
@@ -52,16 +58,8 @@ while True:
 			if 'imgur' in url and '.jpg' not in url and '.png' not in url:
 				url += ".jpg"
 
-			if '.jpg' in url:
-				temp_path += '.jpg'
-			elif '.png' in url:
-				temp_path += '.png'
+			save_img(url, submission.title)
 
-			try:
-				urllib.request.urlretrieve(url, temp_path)
-			except Exception as e:
-				print("Request failed: " + str(e))
-				pass
 		time.sleep(1)
 	print(count)
 	time.sleep(60)
