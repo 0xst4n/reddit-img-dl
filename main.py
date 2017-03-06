@@ -6,6 +6,7 @@ import os
 from bs4 import BeautifulSoup
 from slugify import slugify
 from imgurpython import ImgurClient
+import threading
 
 reddit = praw.Reddit(client_id=config.client_id, client_secret=config.client_secret, user_agent=config.user_agent)
 reddit.read_only = True # might not be needed at all.
@@ -34,33 +35,41 @@ def save_img(link, name):
 # was working on this. might just wanna use some module.
 def alb_handler(url):
 	alb_id = url.split("/")[4]
-	imgs = client.get_album_images(alb_id)
+	try:
+		imgs = client.get_album_images(alb_id)
+	except Exception as e:
+		print("album not found " + alb_id)
+		return
 	for x in imgs:
 		save_img(x.link, str(x.datetime))
 
+def img_thread():
+	while True:
+		for sub in subreddits:
+			for submission in reddit.subreddit(sub).hot(limit=10):
 
-while True:
-	for sub in subreddits:
-		for submission in reddit.subreddit(sub).hot(limit=10):
+				url = submission.url
 
-			url = submission.url
+				if 'reddit.com/r/' in url:
+					continue
 
-			if 'reddit.com/r/' in url:
-				continue
+				if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
+					url += ".jpg"
 
-			if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
-				url += ".jpg"
+				if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
+					alb_handler(url)
+					continue
 
-			if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
-				alb_handler(url)
-				continue
+				if 'imgur' in url and '.jpg' not in url and '.png' not in url:
+					url += ".jpg"
 
-			if 'imgur' in url and '.jpg' not in url and '.png' not in url:
-				url += ".jpg"
+				save_img(url, submission.title)
 
-			save_img(url, submission.title)
+			time.sleep(1)
+		print(count)
+		time.sleep(60)
 
-		time.sleep(1)
-	print(count)
-	time.sleep(60)
+if __name__ == "__main__":
+	t1 = threading.Thread(target=img_thread)
+	t1.start()
 
