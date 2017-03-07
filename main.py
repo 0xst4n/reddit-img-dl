@@ -29,8 +29,24 @@ def save_img(link, name):
 		print("Request:" + link + ": failed: " + str(e))
 		pass
 	
-	print(name + ' ' + link)
+	#print(name + ' ' + link)
 	count +=1
+
+def inp_handler():
+	global subreddits
+	global count
+	while True:
+		inp = input("> ")
+		if inp.startswith("add"):
+			temp_subreddits = inp.split(" ")[1:]
+			for sub in temp_subreddits:
+				subreddits.append(sub)
+			print(subreddits)
+		if inp.startswith("count"):
+			print(count)
+		if inp.startswith("subs"):
+			print(subreddits)
+
 
 # was working on this. might just wanna use some module.
 def alb_handler(url):
@@ -66,10 +82,12 @@ def img_thread():
 				save_img(url, submission.title)
 
 			time.sleep(1)
-		print(count)
+		# print("\nRan: " + str(count))
 		time.sleep(60)
 
 if __name__ == "__main__":
 	t1 = threading.Thread(target=img_thread)
+	t2 = threading.Thread(target=inp_handler)
 	t1.start()
+	t2.start()
 
