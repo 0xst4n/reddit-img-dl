@@ -1,12 +1,14 @@
-import praw
-import config
+
 import time
-import urllib.request
 import os
-from bs4 import BeautifulSoup
+import threading
+import urllib.request
+
+import config
+
+import praw
 from slugify import slugify
 from imgurpython import ImgurClient
-import threading
 
 reddit = praw.Reddit(client_id=config.client_id, client_secret=config.client_secret, user_agent=config.user_agent)
 reddit.read_only = True # might not be needed at all.
