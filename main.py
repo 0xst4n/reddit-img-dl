@@ -30,27 +30,9 @@ def save_img(link, name):
 	except Exception as e:
 		print("Request:" + link + ": failed: " + str(e))
 		pass
-	
 	#print(name + ' ' + link)
 	count +=1
 
-def inp_handler():
-	global subreddits
-	global count
-	while True:
-		inp = input("> ")
-		if inp.startswith("add"):
-			temp_subreddits = inp.split(" ")[1:]
-			for sub in temp_subreddits:
-				subreddits.append(sub)
-			print(subreddits)
-		if inp.startswith("count"):
-			print(count)
-		if inp.startswith("subs"):
-			print(subreddits)
-
-
-# was working on this. might just wanna use some module.
 def alb_handler(url):
 	alb_id = url.split("/")[4]
 	try:
@@ -61,7 +43,7 @@ def alb_handler(url):
 	for x in imgs:
 		save_img(x.link, str(x.datetime))
 
-def img_thread():
+def img_thread(once=False):
 	while True:
 		for sub in subreddits:
 			for submission in reddit.subreddit(sub).hot(limit=10):
@@ -85,11 +67,38 @@ def img_thread():
 
 			time.sleep(1)
 		# print("\nRan: " + str(count))
+		if once:
+			break
 		time.sleep(60)
 
+def inp_thread():
+	global subreddits
+	while True:
+		inp = input("> ")
+
+		if inp.startswith("add"):
+			temp_subreddits = inp.split(" ")[1:]
+			for sub in temp_subreddits:
+				subreddits.append(sub)
+			print(subreddits)
+		
+		if inp == "count":
+			print(count)
+		
+		if inp == "subs":
+			print(subreddits)
+
+		if inp == "run":
+			img_thread(once=True)
+
+		if inp == "exit":
+			os._exit(1)
+
+
+			
 if __name__ == "__main__":
 	t1 = threading.Thread(target=img_thread)
-	t2 = threading.Thread(target=inp_handler)
+	t2 = threading.Thread(target=inp_thread)
 	t1.start()
 	t2.start()
 
