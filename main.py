@@ -94,6 +94,10 @@ def inp_thread():
 		if inp == "exit":
 			os._exit(1)
 
+		if inp.startswith("album"):
+			alb_url = inp.split(" ")[1]
+			alb_handler(alb_url)
+
 
 			
 if __name__ == "__main__":
