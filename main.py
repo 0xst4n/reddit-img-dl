@@ -47,7 +47,6 @@ def img_thread(once=False):
 	while True:
 		for sub in subreddits:
 			for submission in reddit.subreddit(sub).hot(limit=10):
-				print("hi")
 
 				url = submission.url
 
