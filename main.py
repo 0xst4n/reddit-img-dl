@@ -19,11 +19,11 @@ subreddits = config.subreddits
 
 count = 0
 
-def save_img(link, name):
+def save_img(link, name, sub=''):
 	global count
 	# new syntax
 	ext = '.jpg' if '.jpg' in link else '.png'
-	temp_path = os.path.join(config.path, slugify(name) + ext)
+	temp_path = os.path.join(config.path, slugify(name) + "_" + sub + ext) # start using .format()
 
 	try:
 		urllib.request.urlretrieve(link, temp_path)
@@ -41,12 +41,13 @@ def alb_handler(url):
 		print("album not found " + alb_id)
 		return
 	for x in imgs:
-		save_img(x.link, str(x.datetime))
+		save_img(x.link, str(x.datetime), 'alb')
 
 def img_thread(once=False):
 	while True:
 		for sub in subreddits:
 			for submission in reddit.subreddit(sub).hot(limit=10):
+				print("hi")
 
 				url = submission.url
 
@@ -63,7 +64,7 @@ def img_thread(once=False):
 				if 'imgur' in url and '.jpg' not in url and '.png' not in url:
 					url += ".jpg"
 
-				save_img(url, submission.title)
+				save_img(url, submission.title, sub)
 
 			time.sleep(1)
 		# print("\nRan: " + str(count))
