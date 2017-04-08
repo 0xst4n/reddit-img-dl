@@ -15,13 +15,19 @@ reddit.read_only = True # might not be needed at all.
 
 client = ImgurClient(config.imgur_client_id, "")
 
+commands = {
+	"run": "runs the image downloader once.", 
+	"subs": "shows the subreddit where images are downloaded from.",
+	"count": "shows the amount of images totally downloaded.",
+	"exit": "exits the image downloader script."
+}
+
 subreddits = config.subreddits
 
-count = 0
+count = 0 # global var D:
 
 def save_img(link, name, sub=''):
 	global count
-	# new syntax
 	ext = '.jpg' if '.jpg' in link else '.png'
 	temp_path = os.path.join(config.path, slugify(name) + "_" + sub + ext) # start using .format()
 
@@ -30,19 +36,26 @@ def save_img(link, name, sub=''):
 	except Exception as e:
 		print("Request:" + link + ": failed: " + str(e))
 		pass
-	#print(name + ' ' + link)
+
 	count +=1
 
 def alb_handler(url):
+	 # gets number after 4th '/'
 	alb_id = url.split("/")[4]
+
+	# try getting the album images
 	try:
 		imgs = client.get_album_images(alb_id)
 	except Exception as e:
 		print("album not found " + alb_id)
 		return
+	
+	# if the album exists and there are no problems, save the images with save_img()
 	for x in imgs:
+		# use 'alb' instead of sub (might wanna change this later)
 		save_img(x.link, str(x.datetime), 'alb')
 
+# the main thread for downloading the images.
 def img_thread(once=False):
 	while True:
 		for sub in subreddits:
@@ -66,11 +79,11 @@ def img_thread(once=False):
 				save_img(url, submission.title, sub)
 
 			time.sleep(1)
-		# print("\nRan: " + str(count))
 		if once:
 			break
 		time.sleep(60)
 
+# the thread for getting the input commands.
 def inp_thread():
 	global subreddits
 	while True:
@@ -91,13 +104,16 @@ def inp_thread():
 		if inp == "run":
 			img_thread(once=True)
 
+		if inp == "help":
+			for k, v in commands.items():
+				print("{} - {}".format(k, v))
+
 		if inp == "exit":
 			os._exit(1)
 
 		if inp.startswith("album"):
 			alb_url = inp.split(" ")[1]
 			alb_handler(alb_url)
-
 
 			
 if __name__ == "__main__":
