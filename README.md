@@ -1,9 +1,7 @@
 # reddit-img-dl
 
 Requirements:
-  - praw
-  - slugify
-  - imgurpython
+  - `pip install -r requirements.txt`
   - a config.py file with the fields:
     - client_id
     - client_secret
