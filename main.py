@@ -16,10 +16,13 @@ reddit.read_only = True # might not be needed at all.
 client = ImgurClient(config.imgur_client_id, "")
 
 commands = {
-	"run": "runs the image downloader once.", 
+	"run": "runs the image downloader once.",
+	"add <sub>": "add sub(s) to the list." 
 	"subs": "shows the subreddit where images are downloaded from.",
 	"count": "shows the amount of images totally downloaded.",
-	"exit": "exits the image downloader script."
+	"exit": "exits the image downloader script.",
+	"album": "download one album",
+	"remove <sub>": "remove all images from one specific subreddit"
 }
 
 subreddits = config.subreddits
@@ -39,7 +42,7 @@ def save_img(link, name, sub=''):
 
 	count +=1
 
-def alb_handler(url):
+def alb_handler(url, sub):
 	 # gets number after 4th '/'
 	alb_id = url.split("/")[4]
 
@@ -53,7 +56,7 @@ def alb_handler(url):
 	# if the album exists and there are no problems, save the images with save_img()
 	for x in imgs:
 		# use 'alb' instead of sub (might wanna change this later)
-		save_img(x.link, str(x.datetime), 'alb')
+		save_img(x.link, str(x.datetime), sub)
 
 # the main thread for downloading the images.
 def img_thread(once=False):
@@ -70,7 +73,7 @@ def img_thread(once=False):
 					url += ".jpg"
 
 				if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
-					alb_handler(url)
+					alb_handler(url, sub)
 					continue
 
 				if 'imgur' in url and '.jpg' not in url and '.png' not in url:
@@ -82,6 +85,19 @@ def img_thread(once=False):
 		if once:
 			break
 		time.sleep(60)
+
+# function for removing 
+def removeimages(sub):
+	for _, _, filenames in os.walk(config.path):
+		for f in filenames:
+			if sub in f:
+				try:
+					os.remove(config.path + '/' + f)
+				except:
+					print(f + " is in use, try a little later.")
+					pass
+
+				
 
 # the thread for getting the input commands.
 def inp_thread():
@@ -104,16 +120,20 @@ def inp_thread():
 		if inp == "run":
 			img_thread(once=True)
 
+		if inp.startswith("album"):
+			alb_url = inp.split(" ")[1]
+			alb_handler(alb_url)
+
+		if inp.startswith("remove"):
+			sub = inp.split(" ")[1]
+			removeimages(sub)
+
 		if inp == "help":
 			for k, v in commands.items():
 				print("{} - {}".format(k, v))
 
 		if inp == "exit":
 			os._exit(1)
-
-		if inp.startswith("album"):
-			alb_url = inp.split(" ")[1]
-			alb_handler(alb_url)
 
 			
 if __name__ == "__main__":
