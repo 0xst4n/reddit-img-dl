@@ -29,6 +29,7 @@ subreddits = config.subreddits
 
 count = 0 # global var D:
 
+# save image
 def save_img(link, name, sub=''):
 	global count
 	ext = '.jpg' if '.jpg' in link else '.png'
@@ -42,6 +43,7 @@ def save_img(link, name, sub=''):
 
 	count += 1
 
+# check if image exists
 def img_exists(name):
 	if os.path.isfile(config.path + "/" + name):
 		return True
