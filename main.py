@@ -17,7 +17,7 @@ client = ImgurClient(config.imgur_client_id, "")
 
 commands = {
 	"run": "runs the image downloader once.",
-	"add <sub>": "add sub(s) to the list." 
+	"add <sub>": "add sub(s) to the list.",
 	"subs": "shows the subreddit where images are downloaded from.",
 	"count": "shows the amount of images totally downloaded.",
 	"exit": "exits the image downloader script.",
@@ -40,7 +40,11 @@ def save_img(link, name, sub=''):
 		print("Request:" + link + ": failed: " + str(e))
 		pass
 
-	count +=1
+	count += 1
+
+def img_exists(name):
+	if os.path.isfile(config.path + "/" + name):
+		return True
 
 def alb_handler(url, sub):
 	 # gets number after 4th '/'
@@ -55,10 +59,12 @@ def alb_handler(url, sub):
 	
 	# if the album exists and there are no problems, save the images with save_img()
 	for x in imgs:
-		# use 'alb' instead of sub (might wanna change this later)
+		ext = '.jpg' if '.jpg' in x.link else '.png'
+		if img_exists(slugify(str(x.datetime)) + "_" + sub + ext):
+			continue
 		save_img(x.link, str(x.datetime), sub)
 
-# the main thread for downloading the images.
+# the main thread for downloading the images
 def img_thread(once=False):
 	while True:
 		for sub in subreddits:
@@ -78,15 +84,20 @@ def img_thread(once=False):
 
 				if 'imgur' in url and '.jpg' not in url and '.png' not in url:
 					url += ".jpg"
+				
+				# check if image exists
+				ext = '.jpg' if '.jpg' in url else '.png'
+				if img_exists(slugify(submission.title) + "_" + sub + ext):
+					continue
 
 				save_img(url, submission.title, sub)
 
-			time.sleep(1)
+			time.sleep(0.1)
 		if once:
 			break
 		time.sleep(60)
 
-# function for removing 
+# removes all images from specific sub 
 def removeimages(sub):
 	for _, _, filenames in os.walk(config.path):
 		for f in filenames:
@@ -96,8 +107,6 @@ def removeimages(sub):
 				except:
 					print(f + " is in use, try a little later.")
 					pass
-
-				
 
 # the thread for getting the input commands.
 def inp_thread():
