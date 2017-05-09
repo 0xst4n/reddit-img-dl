@@ -1,9 +1,9 @@
 Todo:
 	- Better code structure.
-	- Check if file exists before downloading it.
 
 Done:
 	- Individual album support.
 	- Add subreddit to file name.
 	- Help command.
 	- Deleting images that came from a specific subreddit.
+	- Check if file exists before downloading it.
