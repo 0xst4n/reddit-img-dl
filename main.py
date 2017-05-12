@@ -44,8 +44,9 @@ def save_img(link, name, sub=''):
 	count += 1
 
 # check if image exists
-def img_exists(name):
-	if os.path.isfile(config.path + "/" + name):
+def img_exists(name, url):
+	ext = '.jpg' if '.jpg' in url else '.png'
+	if os.path.isfile(config.path + "/" + name + ext):
 		return True
 
 def alb_handler(url, sub):
@@ -61,9 +62,10 @@ def alb_handler(url, sub):
 	
 	# if the album exists and there are no problems, save the images with save_img()
 	for x in imgs:
-		ext = '.jpg' if '.jpg' in x.link else '.png'
-		if img_exists(slugify(str(x.datetime)) + "_" + sub + ext):
+		# check if image already exists
+		if img_exists(slugify(str(x.datetime)) + "_" + sub, x.link):
 			continue
+		
 		save_img(x.link, str(x.datetime), sub)
 
 # the main thread for downloading the images
@@ -88,8 +90,7 @@ def img_thread(once=False):
 					url += ".jpg"
 				
 				# check if image exists
-				ext = '.jpg' if '.jpg' in url else '.png'
-				if img_exists(slugify(submission.title) + "_" + sub + ext):
+				if img_exists(slugify(submission.title) + "_" + sub, url):
 					continue
 
 				save_img(url, submission.title, sub)
