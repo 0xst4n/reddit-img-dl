@@ -1,4 +1,6 @@
 Todo:
+	- Statistics on how many images downloaded per month/week/day
+	- Delete individual images (give each of them an id too)
 	- Better code structure.
 
 Done:
