@@ -3,6 +3,7 @@ import time
 import os
 import threading
 import urllib.request
+import json
 
 import config
 
@@ -18,6 +19,7 @@ client = ImgurClient(config.imgur_client_id, "")
 commands = {
 	"run": "runs the image downloader once.",
 	"add <sub>": "add sub(s) to the list.",
+	"remove <sub>": "remove sub from the list.",
 	"subs": "shows the subreddit where images are downloaded from.",
 	"count": "shows the amount of images totally downloaded.",
 	"exit": "exits the image downloader script.",
@@ -25,7 +27,9 @@ commands = {
 	"remove <sub>": "remove all images from one specific subreddit"
 }
 
-subreddits = config.subreddits
+subreddits = []
+with open('json.txt') as json_file:
+	subreddits = json.load(json_file)
 
 count = 0 # global var D:
 
@@ -39,7 +43,7 @@ def save_img(link, name, sub=''):
 		urllib.request.urlretrieve(link, temp_path)
 	except Exception as e:
 		print("Request:" + link + ": failed: " + str(e))
-		pass
+		return
 
 	count += 1
 
@@ -121,6 +125,15 @@ def inp_thread():
 			temp_subreddits = inp.split(" ")[1:]
 			for sub in temp_subreddits:
 				subreddits.append(sub)
+			with open('json.txt', 'w') as outfile:
+				json.dump(subreddits, outfile)
+			print(subreddits)
+		
+		if inp.startswith("remove"):
+			temp_subreddit = inp.split(" ")[1]
+			subreddits.remove(temp_subreddit)
+			with open('json.txt', 'w') as outfile:
+				json.dump(subreddits, outfile)
 			print(subreddits)
 		
 		if inp == "count":
