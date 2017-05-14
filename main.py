@@ -30,6 +30,8 @@ commands = {
 subreddits = []
 with open('json.txt') as json_file:
 	subreddits = json.load(json_file)
+if not subreddits:
+	print("\nYou haven't added any subs yet. Add them by doing \n\n add <sub> \n")
 
 count = 0 # global var D:
 
@@ -162,6 +164,7 @@ def inp_thread():
 
 			
 if __name__ == "__main__":
+	
 	t1 = threading.Thread(target=img_thread)
 	t2 = threading.Thread(target=inp_thread)
 	t1.start()
