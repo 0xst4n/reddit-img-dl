@@ -1,7 +1,9 @@
 Todo:
 	- Statistics on how many images downloaded per month/week/day
 	- Delete individual images (give each of them an id too)
-	- Better code structure.
+	- Better code structure
+	- Check if sub exists
+	- Function for json writing
 
 Done:
 	- Individual album support.
@@ -9,3 +11,4 @@ Done:
 	- Help command.
 	- Deleting images that came from a specific subreddit.
 	- Check if file exists before downloading it.
+	- Json file for subreddits
