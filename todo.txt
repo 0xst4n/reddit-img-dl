@@ -3,7 +3,7 @@ Todo:
 	- Delete individual images (give each of them an id too)
 	- Better code structure
 	- Check if sub exists
-	- Function for json writing
+	- Check if link is gifv then ignore. (or handle)
 
 Done:
 	- Individual album support.
@@ -12,3 +12,4 @@ Done:
 	- Deleting images that came from a specific subreddit.
 	- Check if file exists before downloading it.
 	- Json file for subreddits
+	- Function for json writing / reading
