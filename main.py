@@ -27,9 +27,20 @@ commands = {
 	"remove <sub>": "remove all images from one specific subreddit"
 }
 
+# dumps to json file
+def dump(stuff):
+	with open('json.txt', 'w') as outfile:
+		json.dump(stuff, outfile)
+
+# reads from json file
+def read():
+	global subreddits
+	with open('json.txt') as json_file:
+		subreddits = json.load(json_file)
+
 subreddits = []
-with open('json.txt') as json_file:
-	subreddits = json.load(json_file)
+read()
+
 if not subreddits:
 	print("\nYou haven't added any subs yet. Add them by doing \n\n add <sub> \n")
 
@@ -127,15 +138,13 @@ def inp_thread():
 			temp_subreddits = inp.split(" ")[1:]
 			for sub in temp_subreddits:
 				subreddits.append(sub)
-			with open('json.txt', 'w') as outfile:
-				json.dump(subreddits, outfile)
+			dump(subreddits)
 			print(subreddits)
 		
 		if inp.startswith("remove"):
 			temp_subreddit = inp.split(" ")[1]
 			subreddits.remove(temp_subreddit)
-			with open('json.txt', 'w') as outfile:
-				json.dump(subreddits, outfile)
+			dump(subreddits)
 			print(subreddits)
 		
 		if inp == "count":
@@ -164,7 +173,6 @@ def inp_thread():
 
 			
 if __name__ == "__main__":
-	
 	t1 = threading.Thread(target=img_thread)
 	t2 = threading.Thread(target=inp_thread)
 	t1.start()
