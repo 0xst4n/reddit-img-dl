@@ -19,7 +19,7 @@ client = ImgurClient(config.imgur_client_id, "")
 commands = {
 	"run": "runs the image downloader once.",
 	"add <sub>": "add sub(s) to the list.",
-	"remove <sub>": "remove sub from the list.",
+	"removesub <sub>": "remove sub from the list.",
 	"subs": "shows the subreddit where images are downloaded from.",
 	"count": "shows the amount of images totally downloaded.",
 	"exit": "exits the image downloader script.",
@@ -93,7 +93,7 @@ def img_thread(once=False):
 
 				url = submission.url
 
-				if 'reddit.com/r/' in url:
+				if 'reddit.com/r/' in url or 'gifv' in url or 'gif' in url:
 					continue
 
 				if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
@@ -140,8 +140,9 @@ def inp_thread():
 				subreddits.append(sub)
 			dump(subreddits)
 			print(subreddits)
+			img_thread(once=True)
 		
-		if inp.startswith("remove"):
+		if inp.startswith("removesub"):
 			temp_subreddit = inp.split(" ")[1]
 			subreddits.remove(temp_subreddit)
 			dump(subreddits)
