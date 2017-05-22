@@ -4,6 +4,7 @@ Todo:
 	- Better code structure
 	- Check if sub exists
 	- Check if link is gifv then ignore. (or handle)
+	- Ignore specific tags.
 
 Done:
 	- Individual album support.
