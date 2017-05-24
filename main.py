@@ -28,23 +28,25 @@ commands = {
 }
 
 # dumps to json file
-def dump(stuff):
-	with open('json.txt', 'w') as outfile:
-		json.dump(stuff, outfile)
+def dump(prop, val):
+	with open('json.txt') as f:
+		data = json.load(f)
+		data[prop] = val
+	os.remove('json.txt')
+	with open('json.txt', 'w') as f:
+		json.dump(data, f, indent=4)
 
 # reads from json file
-def read():
-	global subreddits
+def read(prop):
 	with open('json.txt') as json_file:
-		subreddits = json.load(json_file)
+		return json.load(json_file)[prop]
 
-subreddits = []
-read()
+subreddits = read("subs")
 
 if not subreddits:
 	print("\nYou haven't added any subs yet. Add them by doing \n\n add <sub> \n")
 
-count = 0 # global var D:
+count = read("count")
 
 # save image
 def save_img(link, name, sub=''):
@@ -57,7 +59,7 @@ def save_img(link, name, sub=''):
 	except Exception as e:
 		print("Request:" + link + ": failed: " + str(e))
 		return
-
+	
 	count += 1
 
 # check if image exists
@@ -113,6 +115,7 @@ def img_thread(once=False):
 				save_img(url, submission.title, sub)
 
 			time.sleep(0.1)
+		dump("count", count)
 		if once:
 			break
 		time.sleep(60)
@@ -138,18 +141,18 @@ def inp_thread():
 			temp_subreddits = inp.split(" ")[1:]
 			for sub in temp_subreddits:
 				subreddits.append(sub)
-			dump(subreddits)
+			dump("subs", subreddits)
 			print(subreddits)
 			img_thread(once=True)
 		
 		if inp.startswith("removesub"):
 			temp_subreddit = inp.split(" ")[1]
 			subreddits.remove(temp_subreddit)
-			dump(subreddits)
+			dump("subs", subreddits)
 			print(subreddits)
 		
 		if inp == "count":
-			print(count)
+			print(read("count"))
 		
 		if inp == "subs":
 			print(subreddits)

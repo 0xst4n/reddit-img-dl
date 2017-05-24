@@ -14,3 +14,4 @@ Done:
 	- Check if file exists before downloading it.
 	- Json file for subreddits
 	- Function for json writing / reading
+	- Persistent counter.
