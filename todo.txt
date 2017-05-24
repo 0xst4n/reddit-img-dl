@@ -5,6 +5,7 @@ Todo:
 	- Check if sub exists
 	- Check if link is gifv then ignore. (or handle)
 	- Ignore specific tags.
+	- Suicide command
 
 Done:
 	- Individual album support.
