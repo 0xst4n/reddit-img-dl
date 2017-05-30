@@ -25,6 +25,7 @@ commands = {
 	"exit": "exits the image downloader script.",
 	"album": "download one album",
 	"remove <sub>": "remove all images from one specific subreddit"
+	"suicide": "removes all images in specified folder."
 }
 
 # dumps to json file
@@ -131,11 +132,20 @@ def removeimages(sub):
 					print(f + " is in use, try a little later.")
 					pass
 
+def suicide():
+	for _, _, filenames in os.walk(config.path):
+		for f in filenames:
+			os.remove(config.path + '/' + f)
+
 # the thread for getting the input commands.
 def inp_thread():
 	global subreddits
 	while True:
-		inp = input("> ")
+		try:
+			inp = input("> ")
+		except EOFError:
+			os._exit(1)
+
 
 		if inp.startswith("add"):
 			temp_subreddits = inp.split(" ")[1:]
@@ -143,6 +153,7 @@ def inp_thread():
 				subreddits.append(sub)
 			dump("subs", subreddits)
 			print(subreddits)
+			print("Running once...")
 			img_thread(once=True)
 		
 		if inp.startswith("removesub"):
@@ -174,6 +185,14 @@ def inp_thread():
 
 		if inp == "exit":
 			os._exit(1)
+
+		if inp == "suicide":
+			if input("You sure? (Y/N) ") == "Y":
+				suicide()
+				print("RIP.")
+			else:
+				continue
+
 
 			
 if __name__ == "__main__":
