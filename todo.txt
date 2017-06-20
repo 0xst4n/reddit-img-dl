@@ -5,7 +5,6 @@ Todo:
 	- Check if sub exists
 	- Check if link is gifv then ignore. (or handle)
 	- Ignore specific tags.
-	- Suicide command
 
 Done:
 	- Individual album support.
@@ -16,3 +15,4 @@ Done:
 	- Json file for subreddits
 	- Function for json writing / reading
 	- Persistent counter.
+	- Suicide command

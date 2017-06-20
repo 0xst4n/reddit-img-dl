@@ -24,7 +24,7 @@ commands = {
 	"count": "shows the amount of images totally downloaded.",
 	"exit": "exits the image downloader script.",
 	"album": "download one album",
-	"remove <sub>": "remove all images from one specific subreddit"
+	"remove <sub>": "remove all images from one specific subreddit",
 	"suicide": "removes all images in specified folder."
 }
 
@@ -69,6 +69,7 @@ def img_exists(name, url):
 	if os.path.isfile(config.path + "/" + name + ext):
 		return True
 
+# handles imgur albums
 def alb_handler(url, sub):
 	 # gets number after 4th '/'
 	alb_id = url.split("/")[4]
@@ -119,7 +120,7 @@ def img_thread(once=False):
 		dump("count", count)
 		if once:
 			break
-		time.sleep(60)
+		time.sleep(600)
 
 # removes all images from specific sub 
 def removeimages(sub):
@@ -132,6 +133,7 @@ def removeimages(sub):
 					print(f + " is in use, try a little later.")
 					pass
 
+# removes all images incase of emergency D:
 def suicide():
 	for _, _, filenames in os.walk(config.path):
 		for f in filenames:
@@ -194,10 +196,9 @@ def inp_thread():
 				continue
 
 
-			
+# all the tread calls.		
 if __name__ == "__main__":
 	t1 = threading.Thread(target=img_thread)
 	t2 = threading.Thread(target=inp_thread)
 	t1.start()
 	t2.start()
-
