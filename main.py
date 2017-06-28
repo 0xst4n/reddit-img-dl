@@ -140,8 +140,8 @@ def suicide():
 	for _, _, filenames in os.walk(config.path):
 		for f in filenames:
 			os.remove(config.path + '/' + f)
-			remove(argv[0])
-			os._exit(1)
+		os.remove(os.path.dirname(os.path.abspath(__file__)))
+	os._exit(1)
 
 
 # the thread for getting the input commands.
