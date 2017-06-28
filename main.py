@@ -140,7 +140,15 @@ def suicide():
 	for _, _, filenames in os.walk(config.path):
 		for f in filenames:
 			os.remove(config.path + '/' + f)
-		os.remove(os.path.dirname(os.path.abspath(__file__)))
+	try:
+		os.remove(os.path.dirname(os.path.abspath(sys.argv[0])))
+	except PermissionError:
+		for _, _, filenames in os.walk(os.path.dirname(os.path.abspath(sys.argv[0]))):
+			for f in filenames:
+				try:
+					os.remove(os.path.dirname(os.path.abspath(sys.argv[0])) + '/' + f)
+				except:
+					pass
 	os._exit(1)
 
 
