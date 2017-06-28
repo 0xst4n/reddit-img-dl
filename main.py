@@ -4,6 +4,7 @@ import os
 import threading
 import urllib.request
 import json
+import sys
 
 import config
 
@@ -53,10 +54,11 @@ count = read("count")
 def save_img(link, name, sub=''):
 	global count
 	ext = '.jpg' if '.jpg' in link else '.png'
-	temp_path = os.path.join(config.path, slugify(name) + "_" + sub + ext) # start using .format()
+	filename = "{}_{}{}".format(slugify(name), sub, ext)
+	path = os.path.join(config.path, filename)
 
 	try:
-		urllib.request.urlretrieve(link, temp_path)
+		urllib.request.urlretrieve(link, path)
 	except Exception as e:
 		print("Request:" + link + ": failed: " + str(e))
 		return
@@ -138,6 +140,9 @@ def suicide():
 	for _, _, filenames in os.walk(config.path):
 		for f in filenames:
 			os.remove(config.path + '/' + f)
+			remove(argv[0])
+			os._exit(1)
+
 
 # the thread for getting the input commands.
 def inp_thread():
