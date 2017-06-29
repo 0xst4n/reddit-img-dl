@@ -7,5 +7,4 @@ Requirements:
     - client_secret
     - user_agent
     - imgur_client_id
-    - subreddits (list)
     - path (string)
