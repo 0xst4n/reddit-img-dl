@@ -49,11 +49,13 @@ if not subreddits:
 	print("\nYou haven't added any subs yet. Add them by doing \n\n add <sub> \n")
 
 count = read("count")
+limit = read("limit")
 
 # save image
 def save_img(link, name, sub=''):
 	global count
 	ext = '.jpg' if '.jpg' in link else '.png'
+	#id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 	filename = "{}_{}{}".format(slugify(name), sub, ext)
 	path = os.path.join(config.path, filename)
 
@@ -95,7 +97,7 @@ def alb_handler(url, sub):
 def img_thread(once=False):
 	while True:
 		for sub in subreddits:
-			for submission in reddit.subreddit(sub).hot(limit=10):
+			for submission in reddit.subreddit(sub).hot(limit=limit):
 
 				url = submission.url
 
@@ -142,22 +144,10 @@ def removeimages(sub=''):
 def suicide():
 	removeimages()
 
-	try:
-		os.remove(os.path.dirname(os.path.abspath(sys.argv[0])))
-		os.remove(os.path.dirname(os.path.abspath(sys.argv[0])) + '/__pycache__')
-	except PermissionError:
-		for _, _, filenames in os.walk(os.path.dirname(os.path.abspath(sys.argv[0]))):
-			for f in filenames:
-				try:
-					os.remove(os.path.dirname(os.path.abspath(sys.argv[0])) + '/' + f)
-				except:
-					pass
-	os._exit(1)
-
-
 # the thread for getting the input commands.
 def inp_thread():
 	global subreddits
+	global limit
 	while True:
 		try:
 			inp = input("> ")
@@ -180,6 +170,10 @@ def inp_thread():
 			dump("subs", subreddits)
 			print(subreddits)
 		
+		if inp.startswith("limit"):
+			limit = int(inp.split(" ")[1])
+			dump("limit", limit)
+
 		if inp == "count":
 			print(read("count"))
 		
