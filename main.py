@@ -125,23 +125,26 @@ def img_thread(once=False):
 		time.sleep(600)
 
 # removes all images from specific sub 
-def removeimages(sub):
+def removeimages(sub=''):
 	for _, _, filenames in os.walk(config.path):
 		for f in filenames:
-			if sub in f:
-				try:
+			try:
+				if sub is not '':
+					if sub in f:
+						os.remove(config.path + '/' + f)
+				else:
 					os.remove(config.path + '/' + f)
-				except:
-					print(f + " is in use, try a little later.")
-					pass
+			except:
+				print(f + " is in use, try a little later.")
+				pass
 
-# removes all images incase of emergency D:
+# removes all images and files incase of emergency D:
 def suicide():
-	for _, _, filenames in os.walk(config.path):
-		for f in filenames:
-			os.remove(config.path + '/' + f)
+	removeimages()
+
 	try:
 		os.remove(os.path.dirname(os.path.abspath(sys.argv[0])))
+		os.remove(os.path.dirname(os.path.abspath(sys.argv[0])) + '/__pycache__')
 	except PermissionError:
 		for _, _, filenames in os.walk(os.path.dirname(os.path.abspath(sys.argv[0]))):
 			for f in filenames:

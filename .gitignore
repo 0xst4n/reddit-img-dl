@@ -3,3 +3,4 @@ config.py
 /dist/
 /*.egg-info
 json.txt
+__pycache__
