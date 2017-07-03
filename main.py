@@ -93,6 +93,21 @@ def alb_handler(url, sub):
 		
 		save_img(x.link, str(x.datetime), sub)
 
+# removes all images from specific sub 
+def removeimages(sub=''):
+	for _, _, filenames in os.walk(config.path):
+		for f in filenames:
+			try:
+				if sub is not '':
+					if sub in f:
+						os.remove(config.path + '/' + f)
+				else:
+					os.remove(config.path + '/' + f)
+			except:
+				print(f + " is in use, try a little later.")
+				pass
+
+
 # the main thread for downloading the images
 def img_thread(once=False):
 	while True:
@@ -125,20 +140,6 @@ def img_thread(once=False):
 		if once:
 			break
 		time.sleep(600)
-
-# removes all images from specific sub 
-def removeimages(sub=''):
-	for _, _, filenames in os.walk(config.path):
-		for f in filenames:
-			try:
-				if sub is not '':
-					if sub in f:
-						os.remove(config.path + '/' + f)
-				else:
-					os.remove(config.path + '/' + f)
-			except:
-				print(f + " is in use, try a little later.")
-				pass
 
 # removes all images and files incase of emergency D:
 def suicide():
@@ -176,6 +177,9 @@ def inp_thread():
 
 		if inp == "count":
 			print(read("count"))
+
+		if inp == "stats":
+			show_stats()
 		
 		if inp == "subs":
 			print(subreddits)
