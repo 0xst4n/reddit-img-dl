@@ -56,13 +56,13 @@ def save_img(link, name, sub=''):
 	global count
 	ext = '.jpg' if '.jpg' in link else '.png'
 	#id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-	filename = "{}_{}{}".format(slugify(name), sub, ext)
+	filename = f"{slugify(name)}_{sub}{ext}"
 	path = os.path.join(config.path, filename)
 
 	try:
 		urllib.request.urlretrieve(link, path)
 	except Exception as e:
-		print("Request:" + link + ": failed: " + str(e))
+		print(f"Request: {link}: failed: {str(e)}")
 		return
 	
 	count += 1
@@ -70,7 +70,7 @@ def save_img(link, name, sub=''):
 # check if image exists
 def img_exists(name, url):
 	ext = '.jpg' if '.jpg' in url else '.png'
-	if os.path.isfile(config.path + "/" + name + ext):
+	if os.path.isfile(f"{config.path}/{name}{ext}"):
 		return True
 
 # handles imgur albums
@@ -82,13 +82,13 @@ def alb_handler(url, sub):
 	try:
 		imgs = client.get_album_images(alb_id)
 	except Exception as e:
-		print("album not found " + alb_id)
+		print(f"album {alb_id} not found")
 		return
 	
 	# if the album exists and there are no problems, save the images with save_img()
 	for x in imgs:
 		# check if image already exists
-		if img_exists(slugify(str(x.datetime)) + "_" + sub, x.link):
+		if img_exists(slugify(f"{str(x.datetime)}_{sub}"), x.link):
 			continue
 		
 		save_img(x.link, str(x.datetime), sub)
@@ -100,11 +100,11 @@ def removeimages(sub=''):
 			try:
 				if sub is not '':
 					if sub in f:
-						os.remove(config.path + '/' + f)
+						os.remove(f"{config.path}/{f}")
 				else:
-					os.remove(config.path + '/' + f)
+					os.remove(f"{config.path}/{f}")
 			except:
-				print(f + " is in use, try a little later.")
+				print(f"{f} is in use, try a little later.")
 				pass
 
 
@@ -130,7 +130,7 @@ def img_thread(once=False):
 					url += ".jpg"
 				
 				# check if image exists
-				if img_exists(slugify(submission.title) + "_" + sub, url):
+				if img_exists(f"{slugify(submission.title)}_{sub}", url):
 					continue
 
 				save_img(url, submission.title, sub)
@@ -197,7 +197,7 @@ def inp_thread():
 
 		if inp == "help":
 			for k, v in commands.items():
-				print("{} - {}".format(k, v))
+				print(f"{k} - {v}")
 
 		if inp == "exit":
 			os._exit(1)
