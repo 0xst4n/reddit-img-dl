@@ -29,18 +29,20 @@ commands = {
 	"suicide": "removes all images in specified folder."
 }
 
+filename = 'data.json'
+
 # dumps to json file
 def dump(prop, val):
-	with open('json.txt') as f:
+	with open(filename) as f:
 		data = json.load(f)
 		data[prop] = val
-	os.remove('json.txt')
-	with open('json.txt', 'w') as f:
+	os.remove(filename)
+	with open(filename, 'w') as f:
 		json.dump(data, f, indent=4)
 
 # reads from json file
 def read(prop):
-	with open('json.txt') as json_file:
+	with open(filename) as json_file:
 		return json.load(json_file)[prop]
 
 subreddits = read("subs")
