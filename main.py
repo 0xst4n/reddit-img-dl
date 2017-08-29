@@ -114,28 +114,30 @@ def removeimages(sub=''):
 def img_thread(once=False):
 	while True:
 		for sub in subreddits:
-			for submission in reddit.subreddit(sub).hot(limit=limit):
+			try:
+				for submission in reddit.subreddit(sub).hot(limit=limit):
+					url = submission.url
 
-				url = submission.url
+					if 'reddit.com/r/' in url or 'gifv' in url or 'gif' in url:
+						continue
 
-				if 'reddit.com/r/' in url or 'gifv' in url or 'gif' in url:
-					continue
+					if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
+						url += ".jpg"
 
-				if 'reddituploads' in url and '.jpg' not in url and '.png' not in url:
-					url += ".jpg"
+					if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
+						alb_handler(url, sub)
+						continue
 
-				if 'imgur.com/a/' in url or 'imgur.com/gallery/' in url:
-					alb_handler(url, sub)
-					continue
+					if 'imgur' in url and '.jpg' not in url and '.png' not in url:
+						url += ".jpg"
+					
+					# check if image exists
+					if img_exists(f"{slugify(submission.title)}_{sub}", url):
+						continue
 
-				if 'imgur' in url and '.jpg' not in url and '.png' not in url:
-					url += ".jpg"
-				
-				# check if image exists
-				if img_exists(f"{slugify(submission.title)}_{sub}", url):
-					continue
-
-				save_img(url, submission.title, sub)
+					save_img(url, submission.title, sub)
+			except:
+				continue
 
 			time.sleep(0.1)
 		dump("count", count)
